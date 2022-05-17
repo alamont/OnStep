@@ -41,7 +41,7 @@
 #define FirmwareDate          __DATE__
 #define FirmwareVersionMajor  4
 #define FirmwareVersionMinor  24      // minor version 0 to 99
-#define FirmwareVersionPatch  "h"     // for example major.minor patch: 1.3c
+#define FirmwareVersionPatch  "q"     // for example major.minor patch: 1.3c
 #define FirmwareVersionConfig 3       // internal, for tracking configuration file changes
 #define FirmwareName          "On-Step"
 #define FirmwareTime          __TIME__
@@ -558,7 +558,12 @@ void loop2() {
 
       dateWasSet=true;
       timeWasSet=true;
-    }
+
+      if (parkStatus == Parked) {
+        VLF("MSG: Restoring parked telescope pointing state");
+        unPark(false);
+      }
+}
 #endif
 
     // UPDATE THE UT1 CLOCK
@@ -590,7 +595,7 @@ void loop2() {
   }
 
   // FASTEST POLLING -----------------------------------------------------------------------------------
-#if AXIS1_DRIVER_MODEL == TMC_SPI
+#if MODE_SWITCH_BEFORE_SLEW == OFF && AXIS1_DRIVER_MODEL == TMC_SPI
   autoModeSwitch();
 #endif
 
